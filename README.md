@@ -1,1 +1,1 @@
-# Rain-Water
+Program takes any number of integer arguments which are interpreted as the ground height. The volume of any valleys is calculated based on the maximum volume of water they could hold and this is printd to screen.
