@@ -21,6 +21,17 @@ int get_volume(map* m);
 
 int main(int argc, char* argv[]) {
 
+    for (int i=1; i<argc; i++) {
+        for (int j=0; argv[i][j]; j++) {
+
+            if (!isdigit(argv[i][j])) {
+                fprintf(stderr, "\033[31mERROR: \033[0m"
+                                "Arguments must be positive integers\n");
+                exit(EXIT_FAILURE);
+            }
+        }
+    }
+
     int* heights = calloc(argc, sizeof(int));
     int max_h = 0, level = 0;
 
@@ -28,7 +39,7 @@ int main(int argc, char* argv[]) {
         int h = atoi(argv[i+1]);
         heights[i] = h;
 
-        if (h > max_h) {
+        if (h >= max_h) {
             level = max_h;
             max_h = h;
         }
