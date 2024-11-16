@@ -18,56 +18,35 @@ void print_map(map* m);
 void init_map(map* m, int* heights);
 edges* get_edges(map* m, int row);
 int get_volume(map* m);
+void check_arguments(int argc, char* argv[]);
+char** allocate_grid(map* m);
+void get_heights(int* heights, int argc, char** argv, int* max_h, int* level);
 
 int main(int argc, char* argv[]) {
 
-    for (int i=1; i<argc; i++) {
-        for (int j=0; argv[i][j]; j++) {
-
-            if (!isdigit(argv[i][j])) {
-                fprintf(stderr, "\033[31mERROR: \033[0m"
-                                "Arguments must be positive integers\n");
-                exit(EXIT_FAILURE);
-            }
-        }
-    }
+    check_arguments(argc, argv);
 
     int* heights = calloc(argc, sizeof(int));
+
+    if (heights == NULL) {
+        fprintf(stderr, "\033[31mERROR:\033[0m Memory Allocation Failure");
+        exit(EXIT_FAILURE);
+    }
     int max_h = 0, level = 0;
 
-    for (int i=0; i<argc-1; i++) {
-        int h = atoi(argv[i+1]);
-        heights[i] = h;
-
-        if (h >= max_h) {
-            level = max_h;
-            max_h = h;
-        }
-    }
+    get_heights(heights, argc, argv, &max_h, &level);
 
     map m;
     m.height = max_h;
     m.width = argc - 1;
     m.level = level;
-
-    m.grid = calloc(max_h, sizeof(char*));
-
-    if (m.grid == NULL) {
-        exit(EXIT_FAILURE);
-    }
-    for (int i=0; i<m.height; i++) {
-        m.grid[i] = calloc(m.width, sizeof(char));
-
-        if (m.grid[i] == NULL) {
-            exit(EXIT_FAILURE);
-        }
-    }
+    m.grid = allocate_grid(&m);
 
     init_map(&m, heights);
 
     int volume = get_volume(&m);
     print_map(&m);
-    printf("Volume = %i\n", volume);
+    printf("\033[1;3;36mVolume = %i\033[0m\n\n", volume);
 
     free_map(&m);
     free(heights);
@@ -149,3 +128,46 @@ edges* get_edges(map* m, int row) {
     return e;
 }
 
+char** allocate_grid(map* m) {
+
+    char** grid = calloc(m->height, sizeof(char*));
+
+    if (grid == NULL) {
+        exit(EXIT_FAILURE);
+    }
+    for (int i=0; i<m->height; i++) {
+        grid[i] = calloc(m->width, sizeof(char));
+
+        if (grid[i] == NULL) {
+            exit(EXIT_FAILURE);
+        }
+    }
+    return grid;
+}
+
+void get_heights(int* heights, int argc, char** argv, int* max_h, int* level) {
+
+    for (int i=0; i<argc-1; i++) {
+        int h = atoi(argv[i+1]);
+        heights[i] = h;
+
+        if (h >= *max_h) {
+            *level = *max_h;
+            *max_h = h;
+        }
+    }
+}
+
+void check_arguments(int argc, char* argv[]) {
+
+    for (int i=1; i<argc; i++) {
+        for (int j=0; argv[i][j]; j++) {
+
+            if (!isdigit(argv[i][j])) {
+                fprintf(stderr, "\033[31mERROR: \033[0m"
+                                "Arguments must be positive integers\n");
+                exit(EXIT_FAILURE);
+            }
+        }
+    }
+}
