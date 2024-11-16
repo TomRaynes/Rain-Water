@@ -137,3 +137,4 @@ edges* get_edges(map* m, int row) {
     e->right = fromR;
     return e;
 }
+
