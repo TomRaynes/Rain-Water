@@ -155,6 +155,9 @@ void get_heights(int* heights, int argc, char** argv, int* max_h, int* level) {
             *level = *max_h;
             *max_h = h;
         }
+        if (h > *level) {
+            *level = h;
+        }
     }
 }
 
